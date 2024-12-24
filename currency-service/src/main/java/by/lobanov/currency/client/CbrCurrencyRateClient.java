@@ -1,8 +1,7 @@
 package by.lobanov.currency.client;
 
-import lombok.val;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.Local;
+import by.lobanov.currency.config.CurrencyClientCfg;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -15,10 +14,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Component
+@RequiredArgsConstructor
 public class CbrCurrencyRateClient implements HttpCurrencyDateRateClient{
 
-    @Value("${currency.client.url}")
-    String baseUrl;
+    private final CurrencyClientCfg clientCfg;
 
     private static final String DATE_PATTERN = "dd/MM/yyyy";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
@@ -26,7 +25,7 @@ public class CbrCurrencyRateClient implements HttpCurrencyDateRateClient{
     @Override
     public String requestByDate(LocalDate date) {
         var client = HttpClient.newHttpClient();
-        var url = buildUriRequest(baseUrl, date);
+        var url = buildUriRequest(clientCfg.getUrl(), date);
         try {
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());

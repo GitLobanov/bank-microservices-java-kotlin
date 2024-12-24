@@ -41,7 +41,7 @@ public class CbrService {
     }
 
     private Map<String, BigDecimal> callAllByCurrencyDate () {
-        val xml = client.requestByDate(LocalDate.now());
+        var xml = client.requestByDate(LocalDate.now());
         ValCurs response = unmarshall(xml);
         return response.getValute().stream()
                 .collect(Collectors.toMap(ValCurs.Valute::getCharCode,item -> parseWithLocale(item.getValue())));
@@ -49,7 +49,7 @@ public class CbrService {
 
     private BigDecimal parseWithLocale(String currency) {
         try {
-            double v = NumberFormat.getNumberInstance(Locale.getDefault()).parse(currency).doubleValue();
+            var v = NumberFormat.getNumberInstance(Locale.getDefault()).parse(currency).doubleValue();
             return BigDecimal.valueOf(v);
         } catch (ParseException e) {
             throw new RuntimeException(e);

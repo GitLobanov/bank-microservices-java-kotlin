@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+cloud:
+  eureka-host: localhost
+  processing-service-url: http://localhost:8090
+  currency-service-url: http://localhost:8085
+  auth-service-url: http://localhost:9000
+  history-service-url: http://localhost:8010
+
+spring:
+  application:
+    name: api-gateway-service
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: currency-service
+          uri: lb://currency-service
+          predicates:
+            - Path=/api/v1/currency/**
+          filters:
+            - StripPrefix=2
+        - id: processing-service
+          uri: lb://processing-service
+          predicates:
+            - Path=/api/v1/processing/**
+          filters:
+            - StripPrefix=2
+#        - id: auth-service
+#          uri: ${cloud.auth-service-url}
+#          predicates:
+#            - Path=/oauth/**, /user-service/**
+#        - id: account-history-service
+#          uri: ${cloud.history-service-url}
+#          predicates:
+#            - Path=/history-service/**
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${cloud.eureka-host}:8761/eureka
+    instance:
+      preferIpAddress: true
+
+logging:
+  level:
+    com.netflix.discovery: DEBUG
+    com.netflix.eureka: DEBUG

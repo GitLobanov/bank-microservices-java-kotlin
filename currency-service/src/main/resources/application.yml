@@ -6,7 +6,7 @@ cloud:
 
 spring:
   application:
-    name: currency-rate-service
+    name: currency-service
 
 eureka:
   client:
